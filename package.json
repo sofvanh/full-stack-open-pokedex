@@ -8,6 +8,7 @@
     "start-prod": "node app.js",
     "test": "jest",
     "test:e2e": "playwright test",
+    "test:e2e:dev": "playwright test --browser=firefox --headed",
     "eslint": "eslint './**/*.{js,jsx}'",
     "build": "webpack --mode production"
   },
