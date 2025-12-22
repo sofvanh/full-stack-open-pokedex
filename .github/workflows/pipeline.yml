@@ -30,6 +30,7 @@ jobs:
       - name: E2E tests
         run: npm run test:e2e
       - name: Deploy
+        if: ${{ github.event_name == 'push' }}
         run: flyctl deploy --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
