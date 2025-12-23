@@ -11,6 +11,7 @@ on:
 jobs:
   simple_deployment_pipeline:
     runs-on: ubuntu-22.04
+    if: ${{ !contains(join(github.event.commits.*.message, ' '), '#skip') }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -38,7 +39,7 @@ jobs:
   tag_release:
     needs: [simple_deployment_pipeline]
     runs-on: ubuntu-22.04
-    if: ${{ github.event_name == 'push' }}
+    if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
     steps:
       - uses: actions/checkout@v4
       - name: Bump version and push tag
