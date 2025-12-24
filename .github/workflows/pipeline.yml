@@ -47,3 +47,24 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BUMP: patch
+
+  notify:
+    needs: [simple_deployment_pipeline, tag_release]
+    runs-on: ubuntu-22.04
+    if: ${{ always() && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
+    steps:
+      - name: Notify success
+        if: ${{ github.event_name == 'push' && needs.simple_deployment_pipeline.result == 'success' && needs.tag_release.result == 'success' }}
+        uses: rjstone/discord-webhook-notify@v2.2.1
+        with:
+          severity: info
+          description: New version deployed!
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+
+      - name: Notify failure
+        if: ${{ github.event_name == 'push' && (needs.simple_deployment_pipeline.result == 'failure' || needs.tag_release.result == 'failure') }}
+        uses: rjstone/discord-webhook-notify@v2.2.1
+        with:
+          severity: error
+          description: Build failed on commit ${{ github.sha }}
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
