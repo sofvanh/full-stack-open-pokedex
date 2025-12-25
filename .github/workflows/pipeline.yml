@@ -55,16 +55,16 @@ jobs:
     steps:
       - name: Notify success
         if: ${{ github.event_name == 'push' && needs.simple_deployment_pipeline.result == 'success' && needs.tag_release.result == 'success' }}
-        uses: rjstone/discord-webhook-notify@v2.2.1
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        uses: Ilshidur/action-discord@d2594079a10f1d6739ee50a2471f0ca57418b554
         with:
-          severity: info
-          description: New version deployed!
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          args: "New version deployed!"
 
       - name: Notify failure
         if: ${{ github.event_name == 'push' && (needs.simple_deployment_pipeline.result == 'failure' || needs.tag_release.result == 'failure') }}
-        uses: rjstone/discord-webhook-notify@v2.2.1
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        uses: Ilshidur/action-discord@d2594079a10f1d6739ee50a2471f0ca57418b554
         with:
-          severity: error
-          description: Build failed on commit ${{ github.sha }}
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          args: "Build failed on commit ${{ github.sha }}"
